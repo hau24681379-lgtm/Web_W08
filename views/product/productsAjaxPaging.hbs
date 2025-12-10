@@ -1,0 +1,102 @@
+<!-- HTML -->
+<div id="products" class="row row-cols-1 row-cols-md-3 g-4">
+    <!-- Các card sản phẩm sẽ được load bằng JS -->
+</div>
+
+<nav class="mt-4">
+    <ul class="pagination justify-content-center" id="pagination">
+        <!-- Phân trang sẽ được tạo bằng JS -->
+    </ul>
+</nav>
+
+<!-- JavaScript -->
+<script>
+    async function loadPage(page = 1) {
+        const res = await fetch('/ajax/products', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ page: page })
+        });
+
+        const data = await res.json();
+
+        // Cập nhật danh sách sản phẩm
+        const productsContainer = document.getElementById('products');
+        productsContainer.innerHTML = ''; // Xóa cũ
+
+        data.products.forEach(product => {
+            productsContainer.innerHTML += createProductCard(product);
+        });
+
+        // Cập nhật phân trang
+        createPagination(data.totalPages, data.page);
+    }
+
+    function createProductCard(product) {
+        return `
+            <div class="col">
+                <div class="card h-100 shadow">
+                    <div class="ratio ratio-1x1">
+                        <img src="/imgs/p/${product.id}.png" 
+                             class="img-card-top" 
+                             alt="${product.name || 'Sản phẩm'}">
+                    </div>
+                    <div class="card-body mt-2">
+                        <h4 class="card-title">${product.title}</h4>
+                        <p class="card-text text-truncate mt-3">${product.description || ''}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="/products/${product.id}" class="btn btn-primary">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function createPagination(totalPages, currentPage) {
+        const paginationContainer = document.querySelector('#pagination');
+        paginationContainer.innerHTML = '';
+
+        // Nút Previous
+        const prevDisabled = currentPage <= 1;
+        const prevClass = prevDisabled ? 'page-item disabled' : 'page-item';
+        paginationContainer.innerHTML += `
+            <li class="${prevClass}">
+                <a class="page-link" href="#" ${!prevDisabled ? `onclick="loadPage(${currentPage - 1})"` : ''} 
+                   aria-label="Previous">
+                    <span aria-hidden="true">«</span>
+                </a>
+            </li>
+        `;
+
+        // Các số trang
+        for (let i = 1; i <= totalPages; i++) {
+            const activeClass = i === currentPage ? 'page-item active' : 'page-item';
+            paginationContainer.innerHTML += `
+                <li class="${activeClass}">
+                    <a class="page-link" href="#" onclick="loadPage(${i})">${i}</a>
+                </li>
+            `;
+        }
+
+        // Nút Next
+        const nextDisabled = currentPage >= totalPages;
+        const nextClass = nextDisabled ? 'page-item disabled' : 'page-item';
+        paginationContainer.innerHTML += `
+            <li class="${nextClass}">
+                <a class="page-link" href="#" ${!nextDisabled ? `onclick="loadPage(${currentPage + 1})"` : ''} 
+                   aria-label="Next">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+        `;
+    }
+
+    // Load trang đầu tiên khi mở trang
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPage(1);
+    });
+</script>

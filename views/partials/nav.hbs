@@ -1,0 +1,61 @@
+<nav class="navbar navbar-expand-sm navbar-light bg-light px-3 py-2 border-bottom shadow-sm">
+    
+    <a class="navbar-brand text-dark fw-bold" href="/" style="font-size: 1.3rem;">Home</a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarNav">
+        
+        <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+                <a class="nav-link text-secondary fw-medium" href="/categories">Categories Management</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-secondary fw-medium" href="#">Services</a>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav ms-auto">
+            {{#if isAuthenticated}}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center rounded-pill py-1 px-3" 
+                       href="#" 
+                       id="navbarDropdown" 
+                       role="button" 
+                       data-bs-toggle="dropdown" 
+                       aria-expanded="false"
+                       style="font-size: 1rem; color: #1276db; background-color: #f9f9f9;">
+                        
+                        <span class="badge text-light rounded-circle me-2" 
+                              style="width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; background-color: #343a40;">
+                            {{user.initials}}
+                        </span>
+                        
+                        <span class="fw-bold text-dark">{{user.username}}</span>
+                        <span class="ms-1 text-muted">-</span> 
+                    </a>
+                    
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="navbarDropdown">
+                        
+                        <li><span class="dropdown-item disabled text-dark fw-bold" 
+                                  style="padding-bottom: 0;">{{user.name}}</span></li>
+                        
+                        <li><span class="dropdown-item disabled text-muted small" 
+                                  style="padding-top: 0; padding-bottom: 0.5rem;">{{user.email}}</span></li>
+                        
+                        <li><hr class="dropdown-divider"></li>
+                        
+                        <li><a class="dropdown-item text-danger" href="/auth/logout">Logout</a></li>
+                    </ul>
+                </li>
+            {{else}}
+                <li class="nav-item">
+                    <a class="nav-link text-primary fw-bold" href="/auth/login" style="font-size: 1.1rem;">Login</a>
+                </li>
+            {{/if}}
+        </ul>
+        
+    </div>
+</nav>
